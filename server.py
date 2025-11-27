@@ -1,13 +1,14 @@
 """
 Valyrian Translator MCP Server
 
-使用 FastMCP 的 from_openapi 方法自动生成
+MCP server for accessing API.
 
 Version: 1.0.0
 Transport: stdio
 """
 import os
 import json
+from pathlib import Path
 import httpx
 from fastmcp import FastMCP
 
@@ -22,8 +23,12 @@ API_KEY = os.getenv("API_KEY", "")
 TRANSPORT = "stdio"
 
 
-# OpenAPI 规范
-OPENAPI_SPEC = """{\n  \"openapi\": \"3.0.0\",\n  \"info\": {\n    \"title\": \"Valyrian Translator\",\n    \"version\": \"1.0.0\",\n    \"description\": \"RapidAPI: orthosie/valyrian-translator\"\n  },\n  \"servers\": [\n    {\n      \"url\": \"https://valyrian-translator.p.rapidapi.com\"\n    }\n  ],\n  \"paths\": {\n    \"/endpoint\": {\n      \"get\": {\n        \"summary\": \"API Endpoint\",\n        \"description\": \"请根据 RapidAPI 页面手动添加端点信息\",\n        \"operationId\": \"api_endpoint\",\n        \"parameters\": [\n          {\n            \"name\": \"param\",\n            \"in\": \"query\",\n            \"required\": false,\n            \"description\": \"参数\",\n            \"schema\": {\n              \"type\": \"string\",\n              \"default\": null,\n              \"enum\": null\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\"\n          }\n        }\n      }\n    }\n  },\n  \"components\": {\n    \"securitySchemes\": {\n      \"ApiAuth\": {\n        \"type\": \"apiKey\",\n        \"in\": \"header\",\n        \"name\": \"X-RapidAPI-Key\"\n      }\n    }\n  },\n  \"security\": [\n    {\n      \"ApiAuth\": []\n    }\n  ]\n}"""
+# 从文件加载 OpenAPI 规范
+def load_openapi_spec():
+    """从 openapi.json 文件加载 OpenAPI 规范"""
+    openapi_path = Path(__file__).parent / "openapi.json"
+    with open(openapi_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # 创建 HTTP 客户端
 # 设置默认 headers
@@ -52,7 +57,7 @@ client = httpx.AsyncClient(
 
 
 # 从 OpenAPI 规范创建 FastMCP 服务器
-openapi_dict = json.loads(OPENAPI_SPEC)
+openapi_dict = load_openapi_spec()
 mcp = FastMCP.from_openapi(
     openapi_spec=openapi_dict,
     client=client,

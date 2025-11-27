@@ -30,7 +30,7 @@ Visit **[EMCP Platform](https://sit-emcp.kaleido.guru)** now to start your MCP j
 
 ## Introduction
 
-This is an automatically generated MCP server using [FastMCP](https://fastmcp.wiki) for accessing the Valyrian Translator API.
+This is an MCP server for accessing the Valyrian Translator API.
 
 - **PyPI Package**: `bach-valyrian_translator`
 - **Version**: 1.0.0
@@ -107,8 +107,8 @@ export API_KEY="your_api_key_here"
 {
   "mcpServers": {
     "valyrian_translator": {
-      "command": "python",
-      "args": ["E:\path\to\valyrian_translator\server.py"],
+      "command": "uvx",
+      "args": ["--from", "bach-valyrian_translator", "bach_valyrian_translator"],
       "env": {
         "API_KEY": "your_api_key_here"
       }
